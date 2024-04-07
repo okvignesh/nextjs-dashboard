@@ -4,6 +4,7 @@ const {
   customers,
   revenue,
   users,
+  movies,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -160,6 +161,89 @@ async function seedRevenue(client) {
   }
 }
 
+async function seedMovies(client) {
+  try {
+    // Create the "movies" table if it doesn't exist
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS movies (
+        id SERIAL PRIMARY KEY,
+        adult BOOLEAN,
+        backdrop_path VARCHAR(255),
+        genre_ids INTEGER[],
+        original_language VARCHAR(5),
+        original_title VARCHAR(255),
+        overview TEXT,
+        popularity NUMERIC,
+        poster_path VARCHAR(255),
+        release_date DATE,
+        title VARCHAR(255),
+        video BOOLEAN,
+        vote_average NUMERIC,
+        vote_count INTEGER
+    );
+    `;
+    console.log(`Created "movies" table`);
+
+    // Fetch data from the API
+    // const apiResponse = await fetch(
+    //   'https://api.themoviedb.org/3/movie/popular?api_key=0d075d66a6b3a8383e74570aa20b62a3',
+    // );
+    // const { results } = await apiResponse.json();
+
+    // Insert data into the "movies" table
+    const insertedMovies = await Promise.all(
+      movies.map((movie) => {
+        return client.sql`
+      INSERT INTO movies (
+        id,
+        title,
+        overview,
+        release_date,
+        poster_path,
+        popularity,
+        vote_average,
+        vote_count,
+        adult,
+        backdrop_path,
+        original_language,
+        original_title,
+        genre_ids,
+        video
+      )
+      VALUES (
+        ${movie.id},
+        ${movie.title},
+        ${movie.overview},
+        ${movie.release_date},
+        ${movie.poster_path},
+        ${movie.popularity},
+        ${movie.vote_average},
+        ${movie.vote_count},
+        ${movie.adult},
+        ${movie.backdrop_path},
+        ${movie.original_language},
+        ${movie.original_title},
+        ${movie.genre_ids},
+        ${movie.video}
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `;
+      }),
+    );
+
+    console.log(`Seeded ${insertedMovies.length} movies`);
+
+    return {
+      createTable,
+      movies: insertedMovies,
+    };
+  } catch (error) {
+    console.error('Error seeding movies:', error);
+    throw error;
+  }
+}
+
 async function main() {
   const client = await db.connect();
 
@@ -167,6 +251,7 @@ async function main() {
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+  await seedMovies(client);
 
   await client.end();
 }
