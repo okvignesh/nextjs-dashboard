@@ -252,10 +252,10 @@ export function MoviesTableSkeleton() {
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Title
+                  Poster
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Overview
+                  Movie Title
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Release Date
@@ -267,7 +267,7 @@ export function MoviesTableSkeleton() {
                   Vote Average
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Vote Count
+                  Overview
                 </th>
               </tr>
             </thead>

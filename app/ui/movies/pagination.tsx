@@ -1,136 +1,129 @@
-// import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-// import clsx from 'clsx';
-// import { useState } from 'react';
+'use client';
 
-// export default function Pagination({
-//   totalPages,
-//   initialPage,
-//   onPageChange,
-// }: {
-//   totalPages: number;
-//   initialPage: number;
-//   onPageChange: (page: number) => void;
-// }) {
-//   const [currentPage, setCurrentPage] = useState(initialPage);
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { generatePagination } from '@/app/lib/utils';
+import { usePathname, useSearchParams } from 'next/navigation';
 
-//   const handlePageChange = (page: number) => {
-//     setCurrentPage(page);
-//     onPageChange(page);
-//   };
+export default function Pagination({ totalPages }: { totalPages: number }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
 
-//   const createPageURL = (pageNumber: number | string) => {
-//     // Add logic to create page URL if necessary
-//   };
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
 
-//   // Generate pagination array
-//   const allPages = generatePagination(currentPage, totalPages);
+  // NOTE: comment in this code when you get to this point in the course
+  // const allPages = generatePagination(currentPage, totalPages);
 
-//   return (
-//     <div className="inline-flex">
-//       <PaginationArrow
-//         direction="left"
-//         onClick={() => handlePageChange(currentPage - 1)}
-//         isDisabled={currentPage <= 1}
-//       />
+  return (
+    <>
+      {/* NOTE: comment in this code when you get to this point in the course */}
 
-//       <div className="flex -space-x-px">
-//         {allPages.map((page, index) => {
-//           let position: 'first' | 'last' | 'single' | 'middle' | undefined;
+      {/* <div className="inline-flex">
+        <PaginationArrow
+          direction="left"
+          href={createPageURL(currentPage - 1)}
+          isDisabled={currentPage <= 1}
+        />
 
-//           if (index === 0) position = 'first';
-//           if (index === allPages.length - 1) position = 'last';
-//           if (allPages.length === 1) position = 'single';
-//           if (page === '...') position = 'middle';
+        <div className="flex -space-x-px">
+          {allPages.map((page, index) => {
+            let position: 'first' | 'last' | 'single' | 'middle' | undefined;
 
-//           return (
-//             <PaginationNumber
-//               key={page}
-//               onClick={() => typeof page === 'number' && handlePageChange(page)}
-//               page={page}
-//               position={position}
-//               isActive={currentPage === page}
-//             />
-//           );
-//         })}
-//       </div>
+            if (index === 0) position = 'first';
+            if (index === allPages.length - 1) position = 'last';
+            if (allPages.length === 1) position = 'single';
+            if (page === '...') position = 'middle';
 
-//       <PaginationArrow
-//         direction="right"
-//         onClick={() => handlePageChange(currentPage + 1)}
-//         isDisabled={currentPage >= totalPages}
-//       />
-//     </div>
-//   );
-// }
+            return (
+              <PaginationNumber
+                key={page}
+                href={createPageURL(page)}
+                page={page}
+                position={position}
+                isActive={currentPage === page}
+              />
+            );
+          })}
+        </div>
 
-// function PaginationNumber({
-//   page,
-//   onClick,
-//   isActive,
-//   position,
-// }: {
-//   page: number | string;
-//   onClick: () => void;
-//   position?: 'first' | 'last' | 'middle' | 'single';
-//   isActive: boolean;
-// }) {
-//   const className = clsx(
-//     'flex h-10 w-10 items-center justify-center text-sm border',
-//     {
-//       'rounded-l-md': position === 'first' || position === 'single',
-//       'rounded-r-md': position === 'last' || position === 'single',
-//       'z-10 bg-blue-600 border-blue-600 text-white': isActive,
-//       'hover:bg-gray-100': !isActive && position !== 'middle',
-//       'text-gray-300': position === 'middle',
-//     },
-//   );
+        <PaginationArrow
+          direction="right"
+          href={createPageURL(currentPage + 1)}
+          isDisabled={currentPage >= totalPages}
+        />
+      </div> */}
+    </>
+  );
+}
 
-//   return isActive || position === 'middle' ? (
-//     <div className={className}>{page}</div>
-//   ) : (
-//     <button onClick={onClick} className={className}>
-//       {page}
-//     </button>
-//   );
-// }
+function PaginationNumber({
+  page,
+  href,
+  isActive,
+  position,
+}: {
+  page: number | string;
+  href: string;
+  position?: 'first' | 'last' | 'middle' | 'single';
+  isActive: boolean;
+}) {
+  const className = clsx(
+    'flex h-10 w-10 items-center justify-center text-sm border',
+    {
+      'rounded-l-md': position === 'first' || position === 'single',
+      'rounded-r-md': position === 'last' || position === 'single',
+      'z-10 bg-blue-600 border-blue-600 text-white': isActive,
+      'hover:bg-gray-100': !isActive && position !== 'middle',
+      'text-gray-300': position === 'middle',
+    },
+  );
 
-// function PaginationArrow({
-//   onClick,
-//   direction,
-//   isDisabled,
-// }: {
-//   onClick: () => void;
-//   direction: 'left' | 'right';
-//   isDisabled?: boolean;
-// }) {
-//   const className = clsx(
-//     'flex h-10 w-10 items-center justify-center rounded-md border',
-//     {
-//       'pointer-events-none text-gray-300': isDisabled,
-//       'hover:bg-gray-100': !isDisabled,
-//       'mr-2 md:mr-4': direction === 'left',
-//       'ml-2 md:ml-4': direction === 'right',
-//     },
-//   );
+  return isActive || position === 'middle' ? (
+    <div className={className}>{page}</div>
+  ) : (
+    <Link href={href} className={className}>
+      {page}
+    </Link>
+  );
+}
 
-//   const icon =
-//     direction === 'left' ? (
-//       <ArrowLeftIcon className="w-4" />
-//     ) : (
-//       <ArrowRightIcon className="w-4" />
-//     );
+function PaginationArrow({
+  href,
+  direction,
+  isDisabled,
+}: {
+  href: string;
+  direction: 'left' | 'right';
+  isDisabled?: boolean;
+}) {
+  const className = clsx(
+    'flex h-10 w-10 items-center justify-center rounded-md border',
+    {
+      'pointer-events-none text-gray-300': isDisabled,
+      'hover:bg-gray-100': !isDisabled,
+      'mr-2 md:mr-4': direction === 'left',
+      'ml-2 md:ml-4': direction === 'right',
+    },
+  );
 
-//   return (
-//     <button onClick={onClick} className={className} disabled={isDisabled}>
-//       {icon}
-//     </button>
-//   );
-// }
+  const icon =
+    direction === 'left' ? (
+      <ArrowLeftIcon className="w-4" />
+    ) : (
+      <ArrowRightIcon className="w-4" />
+    );
 
-// function generatePagination(
-//   currentPage: number,
-//   totalPages: number,
-// ): (number | '...')[] {
-//   // Add logic to generate pagination array if necessary
-//   return [];
-// }
+  return isDisabled ? (
+    <div className={className}>{icon}</div>
+  ) : (
+    <Link className={className} href={href}>
+      {icon}
+    </Link>
+  );
+}

@@ -2,8 +2,15 @@ import Image from 'next/image';
 import { formatDateToLocal } from '@/app/lib/utils';
 import { fetchFilteredMovies } from '@/app/lib/data';
 
-export default async function MoviesTable() {
-  const movies = await fetchFilteredMovies();
+export default async function MoviesTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  // const movies = await fetchFilteredMovies(query, currentPage);
+  const movies = await fetchFilteredMovies(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">
@@ -29,8 +36,8 @@ export default async function MoviesTable() {
                       <Image
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         className="rounded-md"
-                        width={28}
-                        height={28}
+                        width={50}
+                        height={36}
                         alt={movie.title}
                       />
                     </div>

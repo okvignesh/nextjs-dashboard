@@ -246,17 +246,42 @@ export async function getUser(email: string) {
 
 const ITEMS_PER_PAGE1 = 10; // Adjust as needed
 
-export async function fetchFilteredMovies() {
+export async function fetchFilteredMovies(query: string, currentPage: number) {
   noStore();
-  // const offset = (currentPage - 1) * ITEMS_PER_PAGE1;
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE1;
 
   try {
+    // const movies = await sql<Movie>`
+    //   SELECT *
+    //   FROM movies
+    //   ORDER BY release_date DESC
+    //   LIMIT ${ITEMS_PER_PAGE1}
+    // `;
+
     const movies = await sql<Movie>`
-      SELECT *
-      FROM movies
-      ORDER BY release_date DESC
-      LIMIT ${ITEMS_PER_PAGE1}
+    SELECT
+      id,
+      title,
+      release_date,
+      popularity,
+      vote_average,
+      overview,
+      poster_path
+    FROM
+        movies
+    WHERE
+        title ILIKE ${`%${query}%`} OR
+        release_date::text ILIKE ${`%${query}%`} OR
+        overview ILIKE ${`%${query}%`}
+    ORDER BY
+        release_date DESC
+    LIMIT
+        ${ITEMS_PER_PAGE}
+    OFFSET
+        ${offset}
     `;
+
+    console.log('Fetched Movies List => ', movies.rows);
 
     return movies.rows;
   } catch (error) {
