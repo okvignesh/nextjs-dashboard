@@ -244,7 +244,7 @@ export async function getUser(email: string) {
   }
 }
 
-const ITEMS_PER_PAGE1 = 10; // Adjust as needed
+const ITEMS_PER_PAGE1 = 5; // Adjust as needed
 
 export async function fetchFilteredMovies(query: string, currentPage: number) {
   noStore();
@@ -276,7 +276,7 @@ export async function fetchFilteredMovies(query: string, currentPage: number) {
     ORDER BY
         release_date DESC
     LIMIT
-        ${ITEMS_PER_PAGE}
+        ${ITEMS_PER_PAGE1}
     OFFSET
         ${offset}
     `;
